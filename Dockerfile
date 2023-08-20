@@ -42,6 +42,23 @@ COPY main.js .
 # application will listen on when running in the container.
 #EXPOSE 8080
 
+RUN whoami
+
+# _____ U S E R _____
+# The next line sets the user to use when running the image. This is a
+# security best practice, as it prevents the application from running as
+# root.
+# Set user and group
+ARG user=nodeUser
+ARG group=nodeUsers
+ARG uid=123
+ARG gid=123
+RUN groupadd -g ${gid} ${group}
+RUN useradd -u ${uid} -g ${group} -s /bin/sh -m ${user} # <--- the '-m' create a user home directory
+
+# Switch to user
+USER ${uid}:${gid}
+
 # _____ E N T R Y P O I N T _____
 # The next line sets the default command for the container to node main.js.
 # This tells Docker to run node main.js whenever the container is launched
@@ -59,3 +76,5 @@ ENTRYPOINT ["node"]
 # This instruction supplies arguments for the image’s entrypoint.
 # In this example, it results in Node.js running your application’s code.
 CMD ["main.js"]
+
+RUN whoami
